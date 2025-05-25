@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import addUserSchema from "../schemas/add-user-schema.js";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -13,14 +14,17 @@ export const getAllUsers = async (req, res) => {
 };
 
 export const createUser = async (req, res) => {
-  const { name, email } = req.body;
+  const { body } = req;
 
   try {
-    if (!name || !email) {
-      return res.status(400).json({
-        message: "Name and email are required",
-      });
+    const validator = addUserSchema();
+    const { error, value } = validator.validate(body);
+
+    if (error) {
+      return res.status(400).json({ message: error.details });
     }
+
+    const { name, email } = value;
     const user = new User({ name, email });
     await user.save();
     return res.status(201).json(user);
