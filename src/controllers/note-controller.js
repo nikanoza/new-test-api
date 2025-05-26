@@ -1,11 +1,46 @@
+import Note from "../models/Note.js";
+
 export const getAllNotes = async (req, res) => {
-  return res.json({ width: 400, height: 400, length: 300, color: "#FFF" });
+  try {
+    const notes = await Note.find();
+    return res.status(200).json(notes);
+  } catch (error) {
+    console.error(error, "this error");
+    return res.status(500).json({
+      message: "An error occurred while deleting the user",
+    });
+  }
+};
+
+const getNoteByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const notes = await Note.find({ userId });
+    return res.status(200).json(notes);
+  } catch (error) {
+    console.error(error, "this error");
+    return res.status(500).json({
+      message: "An error occurred while fetching the notes",
+    });
+  }
 };
 
 export const createNote = async (req, res) => {
   try {
     const { body } = req;
-    await body.note;
-    return res.status(201).json({ message: "Note created successfully" });
-  } catch (error) {}
+
+    const { title, text, userId } = body;
+    const note = new Note({
+      title,
+      text,
+      userId,
+    });
+    await note.save();
+    return res.status(201).json(note);
+  } catch (error) {
+    console.error(error, "this error");
+    return res.status(500).json({
+      message: "An error occurred while deleting the user",
+    });
+  }
 };
