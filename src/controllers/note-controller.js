@@ -2,7 +2,7 @@ import Note from "../models/Note.js";
 
 export const getAllNotes = async (req, res) => {
   try {
-    const notes = await Note.find();
+    const notes = await Note.find().populate("user");
     return res.status(200).json(notes);
   } catch (error) {
     console.error(error, "this error");
@@ -33,7 +33,7 @@ export const createNote = async (req, res) => {
     const note = new Note({
       title,
       text,
-      userId,
+      user: userId,
     });
     await note.save();
     return res.status(201).json(note);

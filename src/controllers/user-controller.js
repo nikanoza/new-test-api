@@ -1,10 +1,12 @@
+import Note from "../models/Note.js";
 import User from "../models/User.js";
 import addUserSchema from "../schemas/add-user-schema.js";
 import updateUserSchema from "../schemas/update-user-schema.js";
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select("-_id -__v").lean();
+
     return res.status(200).json(users);
   } catch (error) {
     console.error(error, "this error");
