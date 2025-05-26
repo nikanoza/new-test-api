@@ -1,4 +1,4 @@
-import Note from "../models/Note.js";
+import { registrationWelcome } from "../mail/index.js";
 import User from "../models/User.js";
 import addUserSchema from "../schemas/add-user-schema.js";
 import updateUserSchema from "../schemas/update-user-schema.js";
@@ -30,6 +30,7 @@ export const createUser = async (req, res) => {
     const { name, email } = value;
     const user = new User({ name, email });
     await user.save();
+    await registrationWelcome(email, name);
     return res.status(201).json(user);
   } catch (error) {
     console.error(error, "this error");
