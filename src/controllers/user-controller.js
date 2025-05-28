@@ -20,9 +20,14 @@ export const getAllUsers = async (req, res) => {
 };
 
 export const createUser = async (req, res) => {
-  const { body } = req;
+  const { body, file } = req;
 
   try {
+    if (!file) {
+      return res.status(400).json({ message: "Avatar is required" });
+    }
+
+    const imageUrl = "/images/" + file.filename;
     const validator = addUserSchema();
     const { error, value } = validator.validate(body);
 
@@ -33,9 +38,13 @@ export const createUser = async (req, res) => {
     const { name, email, password } = value;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const user = new User({ name, email, password: hashedPassword });
+    const user = new User({
+      name,
+      email,
+      password: hashedPassword,
+      image: imageUrl,
+    });
     await user.save();
-    // await registrationWelcome(email, name);
     return res.status(201).json(user);
   } catch (error) {
     console.error(error, "this error");

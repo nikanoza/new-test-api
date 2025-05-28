@@ -7,11 +7,14 @@ import {
   updateUser,
 } from "../controllers/user-controller.js";
 import authMiddleware from "../middlewares/auth-middleware.js";
+import { createMulterImageConfigs } from "../helpers/multer-config.js";
 
 const userRouter = express.Router();
 
+const upload = createMulterImageConfigs("public/images");
+
 userRouter.get("/users", getAllUsers);
-userRouter.post("/users", createUser);
+userRouter.post("/users", upload.single("avatar"), createUser);
 userRouter.put("/users/:id", updateUser);
 userRouter.delete("/users/:id", authMiddleware, deleteUser);
 userRouter.post("/login", loginUser);
